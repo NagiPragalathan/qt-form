@@ -155,6 +155,16 @@ class Ui_Form(object):
         self.reg = QtWidgets.QWidget(self.widget)
         self.reg.setGeometry(QtCore.QRect(340, 30, 220, 411))
         self.reg.setObjectName("reg")
+        
+        self.side_ = QtWidgets.QPushButton(self.reg)
+        self.side_.setGeometry(QtCore.QRect(180, 330, 15, 80))
+        self.side_.setFont(font)
+        self.side_.setStyleSheet("border-radius:0px;\n"
+"border-top-right-radius:15px;\n"
+"border-bottom-right-radius:15px;")
+        self.side_.setCheckable(True)
+        self.side_.setObjectName("side_")
+        
         self.label_17 = QtWidgets.QLabel(self.reg)
         self.label_17.setGeometry(QtCore.QRect(30, 10, 141, 40))
         font = QtGui.QFont()
@@ -260,7 +270,7 @@ class Ui_Form(object):
         self.lineEdit_16.setPlaceholderText(_translate("Form", "  Confirm Password"))
         self.lineEdit_17.setPlaceholderText(_translate("Form", "  Organization"))
         self.label_18.setText(_translate("Form", "Already Registered?"))
-
+        self.side_.setText(_translate("Form", "<"))
 
 if __name__ == "__main__":
     import sys
@@ -270,4 +280,3 @@ if __name__ == "__main__":
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
-

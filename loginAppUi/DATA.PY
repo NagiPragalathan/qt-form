@@ -11,7 +11,16 @@ def create_table():
              NAME           TEXT    NOT NULL,
              EMAIL           TEXT  UNIQUE  NOT NULL,
              PASS           TEXT    NOT NULL,
-             ORG            TEXT     NOT NULL);''')
+             ORG            TEXT     ,
+             ACTIVE BOOL DEFAULT FALSE,
+             TYPE INT NOT NULL DEFAULT 1,
+             CREATED_DATE DATETIME DEFAULT CURRENT_TIMESTAMP );''')
+    conn.execute('''CREATE TABLE USER_LOG
+             (ID integer auto_increment primary key unique,
+             USR_NAME    TEXT    NOT NULL,
+             LAST_LOGIN DATETIME DEFAULT CURRENT_TIMESTAMP );''')
+    
+    
     print("Table created successfully")
 
 create_table()

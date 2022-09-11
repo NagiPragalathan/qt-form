@@ -1,3 +1,5 @@
+import email
+import re
 from PyQt5 import QtWidgets, QtCore
 from form import Ui_Form
 import sys
@@ -10,10 +12,21 @@ class LoginApp(QtWidgets.QWidget, Ui_Form):
             self.log.hide()
             self.reg.show()
             self.side.setText("<")
+    def changeForm_(self):
+        print("click")
+        self.log.show()
+        self.reg.hide()
+        self.side_.setText(">")
+    def Check_inputs(self,password,email):
+        if ('@' in email):
+            special_char = '[!%^&*()<>?/\|}{~:]'
+            for i in special_char:
+                if( i in password ):
+                    return False
         else:
-            self.reg.show()
-            self.log.hide()
-            self.side.setText(">")
+            return False
+        return True
+  
     def signin(self):
         def set_id():
             count = 0
@@ -24,38 +37,39 @@ class LoginApp(QtWidgets.QWidget, Ui_Form):
         conn = sqlite3.connect('test.sqlite')
         name = self.lineEdit_13.text()
         email = self.lineEdit_12.text()
-        password = self.lineEdit_15.text()
+        password = (self.lineEdit_15.text()).upper()
         con_password = self.lineEdit_16.text()
-        org = self.lineEdit_17.text()
-        if(password == con_password):
-            try:
-                bytes = password.encode("utf-8")
-                salt = bcrypt.gensalt()
-                hash = bcrypt.hashpw(bytes, salt)
-                conn.execute(f"""INSERT INTO COMPANY (ID,NAME,EMAIL,PASS,ORG) VALUES (?,?,?,?,?)""",(set_id(),name,email,hash,org))
-                conn.commit()
-                conn.close()
-            except:
-                print("email already exist....")
+        if self.Check_inputs(password,email):
+            org = self.lineEdit_17.text()
+            if(password == con_password):
+                try:
+                    bytes = password.encode("utf-8")
+                    salt = bcrypt.gensalt()
+                    hash = bcrypt.hashpw(bytes, salt)
+                    conn.execute(f"""INSERT INTO COMPANY (ID,NAME,EMAIL,PASS,ORG) VALUES (?,?,?,?,?)""",(set_id(),name,email,hash,org))
+                    conn.commit()
+                    conn.close()
+                except:
+                    print("email already exist....")
+            else:
+                print("did not same")
         else:
-            print("did not same")
+            print("please check inputs")
     def login(self):
         worng = True
         email = self.lineEdit.text()
         password = self.lineEdit_2.text()
         conn = sqlite3.connect('test.sqlite')
-        quary = conn.execute(f"""select * from COMPANY""")
-        for i in quary:
-             if( email == i[2]):
-                if(bcrypt.checkpw(password.encode('utf-8'),i[3])):
-                    print("user name and passwords are correct...!")
-                    worng = False
-                    break
-        if worng:
-            print("check your user name (or) password")
-
-        
-        
+        format = f"""select PASS from COMPANY WHERE EMAIL = '{email}' """
+        quary = conn.execute(format)
+        out = list(quary.fetchall())
+        print(out[0][0])
+        if bcrypt.checkpw(password.encode('utf-8'),out[0][0]):
+            print("correct") 
+        else:
+            print("worng")
+                
+                
     def __init__(self):
         super(LoginApp, self).__init__()
         self.setupUi(self)
@@ -67,6 +81,7 @@ class LoginApp(QtWidgets.QWidget, Ui_Form):
         self.regbtn.setGraphicsEffect(QtWidgets.QGraphicsDropShadowEffect(blurRadius=25, xOffset=3, yOffset=3))
         self.reg.hide()
         self.side.clicked.connect(self.changeForm)
+        self.side_.clicked.connect(self.changeForm_)
         self.regbtn.clicked.connect(self.signin)
         self.logbtn.clicked.connect(self.login)
 
